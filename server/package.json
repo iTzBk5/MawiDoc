@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node -e \"console.log('ENV KEYS:', Object.keys(process.env).join(', '));\" && node dist/server.js",
     "migrate": "npx prisma migrate dev",
     "migrate:prod": "npx prisma migrate deploy",
     "seed": "npx tsx prisma/seed.ts",
