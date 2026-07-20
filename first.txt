@@ -1,0 +1,220 @@
+[الدور والمسؤولية] أنت الآن تعمل بصفة Staff Software Engineer ومدير تقني Tech Lead. مهمتك التخطيط المعماري الصارم للمشروع التالي: [أI want to build a complete mobile application called "MawiDOC" (Arabic name: موعدك).
+
+The project is a medical appointment booking platform developed with:
+
+Frontend:
+- React Native (Android & iOS)
+- TypeScript
+- React Navigation
+- Axios
+
+Backend:
+- Node.js
+- Express.js
+- PostgreSQL
+- Prisma ORM
+- JWT Authentication
+
+The application supports two user roles:
+1. Patient
+2. Doctor
+
+-----------------------------
+Patient Features
+-----------------------------
+
+- Register
+- Login
+- Search doctors
+- Search by specialty
+- Search by city
+- View doctors on map
+- View doctor profile
+- View doctor's availability (Open / Closed)
+- View available appointment slots
+- Book appointment
+- Cancel appointment
+- Receive notification when doctor accepts appointment
+- Receive reminder before appointment
+- View appointment history
+- Edit profile
+- Arabic & French/ english languages
+
+-----------------------------
+Doctor Features
+-----------------------------
+
+the doctor account is already have he can not creat account for his own
+
+Doctor can:
+
+- Login
+- Complete profile
+- Upload profile photo
+- Add clinic information
+- Add specialties
+- Set consultation price
+- Set working days
+- Set available appointment hours
+- Open / Close clinic
+- Accept appointment
+- Reject appointment
+- Cancel appointment
+- Create appointment manually
+- View today's appointments
+- View patient information
+- View statistics
+
+-----------------------------
+Authentication
+-----------------------------
+
+When the application starts,
+the first screen asks:
+
+"Are you a Patient or a Doctor?"
+
+If Patient:
+- Register
+- Login
+
+If Doctor:
+- Login only
+
+-----------------------------
+Patient Profile
+-----------------------------
+
+- Full Name
+- Username
+- Phone Number
+- Password
+- Age
+- Gender
+- City
+
+-----------------------------
+Doctor Profile
+-----------------------------
+
+- Full Name
+- Username
+- Phone Number
+- Password
+- Specialty
+- Clinic Name
+- Address
+- Description
+- Consultation Price
+- Working Hours
+- Status (Open / Closed)
+- Profile Picture
+- Location (Google Maps)
+
+-----------------------------
+Appointment System
+-----------------------------
+
+Patients can:
+
+- View available slots
+- Book appointments
+- Cancel appointments
+
+Doctors can:
+
+- Cancel appointments
+- Create appointments
+
+Appointment Status:
+
+- Pending
+- Cancelled
+- Completed
+
+-----------------------------
+Notifications
+-----------------------------
+
+Patient receives notification when:
+
+- Appointment cancelled
+- Appointment reminder before visit
+
+Doctor receives notification when:
+
+- New appointment requested
+
+-----------------------------
+Search
+-----------------------------
+
+Search by:
+
+- Doctor Name
+- Specialty
+- City
+
+-----------------------------
+Languages
+-----------------------------
+
+English
+Arabic
+French
+
+-----------------------------
+Map
+-----------------------------
+
+Display nearby doctors using Google Maps.
+
+-----------------------------
+Statistics
+-----------------------------
+
+Doctor Dashboard:
+
+- Number of appointments
+- Today's appointments
+- Monthly appointments
+- Cancelled appointments
+- Total patients
+
+-----------------------------
+
+UI
+
+Design a modern medical application using Closest Name: Amsterdam
+RGB (7, 39, 77)and Closest Name: Persian Green
+RGB (1, 168, 148)
+
+Keep the interface simple, elegant and easy to use.
+
+The application should follow clean architecture and best practices.]
+
+[قواعد ما قبل التتخطيط] قبل البدء بالبروتوكولات، يجب أن تطبق مبدأ "Think Before Coding":
+
+حدد افتراضاتك حول المتطلبات بوضوح.
+إذا وجد غموض في المتطلبات، توقف واسأل فوراً؛ لا تختار مساراً بصمت.
+اقترح الحل الأبسط (Simplicity First) وارفض أي تعقيدات غير ضرورية.
+[البروتوكولات الإلزامية - تنفيذ تسلسلي] البروتوكول الأول: الوعي الزمني وموثوقية التبعيات
+
+مهم جدا:حدد السنة والشهر من النظام باستخدام shell. إذا نجحت في ذلك ابحث في المستودعات الرسمية (npm, GitHub) عن أحدث الإصدارات المستقرة الى هذا التاريخ.
+وثّق الإصدارات وتجنب الـ Deprecated تماماً.
+البروتوكول الثاني: التدفق المنطقي ومنع زحف الميزات (No Feature Creep)
+
+التزم بالنطاق المطلوب فقط. لا ميزات إضافية، لا مرونة غير مطلوبة.
+ارسم رحلة المستخدم (GUI) أو تدفق البيانات (API) كـ "أهداف قابلة للتحقق".
+البروتوكول الثالث: المعمارية الذكية والتجريد الواقعي (Surgical Architecture)
+
+طبق مبدأ "Simplicity First": أقل قدر من الكود يحل المشكلة.
+أنشئ طبقة Shared/Core فقط للمنطق المتكرر فعلياً، لا تجرد كوداً سيُستخدم مرة واحدة.
+التزم بالتقسيم المعتمد على الميزات (Domain-Driven) مع منع تفتيت الملفات (No Micro-files).
+البروتوكول الرابع: استراتيجية التتبع (Safe Logging)
+
+صمم نظام Logging غير حظري (Asynchronous) وبسيط، يدعم المستويات الأساسية فقط دون التأثير على الأداء.
+البروتوكول الخامس: تأسيس الذاكرة الخارجية (PROJECT_MAP.md)
+
+أنشئ محتوى الملف متضمناً: [TECH_STACK], [SYSTEM_FLOW], [ARCHITECTURE], وقسم [ORPHANS & PENDING] لتتبع النواقص.
+[الموجز المطلوب] قدم المخرجات أعلاه بلغة تقنية مكثفة ودقيقة جدا، مع خطة عمل (Milestones) تعتمد "نجاح الأهداف" (Verifiable Goals). انتظر الموافقة.

@@ -1,0 +1,42 @@
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Server (Node.js / Express / Prisma)
+server/node_modules/
+server/dist/
+server/build/
+server/.env
+server/.env.*
+!server/.env.example
+server/coverage/
+server/serviceAccountKey.json
+
+# Mobile (React Native)
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/build/
+mobile/coverage/
+mobile/.env
+mobile/.env.*
+!mobile/.env.example
+mobile/android/.gradle
+mobile/android/app/build
+mobile/android/build
+mobile/android/.idea
+mobile/ios/Pods/
+mobile/ios/build/
+mobile/ios/*.xcworkspace/xcuserdata/
+mobile/.env.*
+!mobile/.env.example

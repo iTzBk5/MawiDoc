@@ -1,0 +1,49 @@
+{
+  "name": "@mawi-doc/server",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "migrate": "npx prisma migrate dev",
+    "migrate:prod": "npx prisma migrate deploy",
+    "seed": "npx tsx prisma/seed.ts",
+    "studio": "npx prisma studio"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@mawi-doc/shared": "1.0.0",
+    "@prisma/client": "^5.20.0",
+    "bcryptjs": "2.4.3",
+    "cloudinary": "^1.41.3",
+    "cors": "2.8.5",
+    "date-fns": "^4.4.0",
+    "dotenv": "16.5.0",
+    "express": "5.2.1",
+    "express-rate-limit": "7.5.0",
+    "firebase-admin": "^14.1.0",
+    "helmet": "8.1.0",
+    "jsonwebtoken": "9.0.3",
+    "multer": "2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "node-cron": "3.0.3",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^9.0.3",
+    "pino": "9.6.0",
+    "pino-pretty": "13.0.0",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
+    "@types/cors": "2.8.17",
+    "@types/express": "5.0.2",
+    "@types/jsonwebtoken": "9.0.9",
+    "@types/multer": "1.4.12",
+    "@types/node": "22.15.3",
+    "@types/node-cron": "3.0.11",
+    "@types/nodemailer": "^8.0.1",
+    "prisma": "^5.20.0",
+    "tsx": "4.19.4",
+    "typescript": "5.8.3"
+  }
+}

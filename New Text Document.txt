@@ -1,0 +1,59 @@
+Before I send you the project files, you must first understand the project.
+
+The project is called "MawiDOC" (Arabic: موعدك).
+
+IMPORTANT:
+
+This is a React Native MOBILE APPLICATION.
+
+It is NOT a website.
+It is NOT a Next.js project.
+It is NOT a web application.
+
+The application is built exclusively for smartphones:
+
+- Android
+- iPhone (iOS)
+
+The entire frontend is developed using:
+
+- React Native
+- TypeScript
+
+The backend is developed using:
+
+- Node.js
+- Express.js
+- PostgreSQL
+- Prisma ORM
+
+The backend is already complete and fully functional.
+
+Your task is ONLY to improve the React Native mobile application's UI and UX.
+
+Never convert this project into:
+- Next.js
+- React Web
+- HTML/CSS website
+- Progressive Web App (PWA)
+- Expo project
+- Any other framework
+
+Keep it as a React Native CLI + TypeScript mobile application.
+
+Every screen you design must be optimized for mobile devices and follow mobile UI/UX best practices for Android and iOS.
+IMPORTANT REMINDER
+
+Always assume this project is a mobile application.
+
+Every screen must be designed for phone screens only.
+
+Never generate desktop layouts.
+
+Never generate web pages.
+
+Never suggest Next.js.
+
+Never convert the project to another framework.
+
+Continue working only with the existing React Native CLI + TypeScript project.

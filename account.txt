@@ -1,0 +1,5 @@
+patient@test.com
+password123
+
+doctor1@test.com
+clinic@test.com

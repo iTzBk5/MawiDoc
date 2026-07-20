@@ -1,0 +1,219 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  PATIENT
+  DOCTOR
+  CLINIC
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum AppointmentStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  phone     String   @unique
+  password  String
+  role      UserRole
+  fcmTokens FCMToken[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  isVerified       Boolean  @default(false)
+  verificationCode String?
+  resetPasswordCode String?
+
+  patientProfile PatientProfile?
+  doctorProfile  DoctorProfile?
+  clinicProfile  ClinicProfile?
+
+  @@map("users")
+}
+
+model PatientProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String
+  username  String   @unique
+  age       Int
+  gender    Gender
+  city      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  appointments Appointment[]
+
+  @@map("patient_profiles")
+}
+
+model DoctorProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName          String
+  username          String    @unique
+  specialtyId       String
+  specialty         Specialty @relation(fields: [specialtyId], references: [id])
+  clinicName        String?
+  address           String?
+  description       String?
+  consultationPrice Float     @default(0)
+  profilePicture    String?
+  latitude          Float?
+  longitude         Float?
+  isOpen            Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  clinicId          String?
+  clinic            ClinicProfile? @relation(fields: [clinicId], references: [id])
+
+  workingDays    WorkingDay[]
+  availableSlots AvailableSlot[]
+  appointments   Appointment[]
+  photos         GalleryPhoto[]
+
+  @@map("doctor_profiles")
+}
+
+model Specialty {
+  id      String          @id @default(uuid())
+  name    String          @unique
+  nameAr  String
+  nameFr  String
+  icon    String?
+  doctors DoctorProfile[]
+  clinics ClinicProfile[] @relation("ClinicSpecialties")
+
+  @@map("specialties")
+}
+
+model WorkingDay {
+  id        String        @id @default(uuid())
+  doctorId  String
+  doctor    DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  dayOfWeek Int
+  isActive  Boolean       @default(true)
+  startTime String        @default("09:00")
+  endTime   String        @default("17:00")
+
+  @@unique([doctorId, dayOfWeek])
+  @@map("working_days")
+}
+
+model AvailableSlot {
+  id        String        @id @default(uuid())
+  doctorId  String
+  doctor    DoctorProfile @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  date      DateTime      @db.Date
+  startTime String
+  endTime   String
+  isBooked  Boolean       @default(false)
+
+  appointment Appointment?
+
+  @@unique([doctorId, date, startTime])
+  @@map("available_slots")
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  patientId   String?
+  patient     PatientProfile?   @relation(fields: [patientId], references: [id])
+  patientName String?           // For walk-in patients without an account
+  doctorId    String
+  doctor      DoctorProfile     @relation(fields: [doctorId], references: [id])
+  slotId      String?           @unique
+  slot        AvailableSlot?    @relation(fields: [slotId], references: [id])
+  date        DateTime          @db.Date
+  startTime   String
+  endTime     String
+  status      AppointmentStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  notifications Notification[]
+
+  @@index([patientId, date])
+  @@index([doctorId, date])
+  @@index([status])
+  @@map("appointments")
+}
+
+model Notification {
+  id           String        @id @default(uuid())
+  userId       String
+  title        String
+  body         String
+  data         Json?
+  isRead       Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  appointmentId String?
+  appointment  Appointment?  @relation(fields: [appointmentId], references: [id])
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model FCMToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  platform  String
+  createdAt DateTime @default(now())
+
+  @@map("fcm_tokens")
+}
+
+model ClinicProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  address           String?
+  description       String?
+  latitude          Float?
+  longitude         Float?
+  isOpen            Boolean   @default(false)
+  profilePicture    String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  doctors           DoctorProfile[]
+  specialties       Specialty[]     @relation("ClinicSpecialties")
+  photos            GalleryPhoto[]
+
+  @@map("clinic_profiles")
+}
+
+model GalleryPhoto {
+  id              String         @id @default(uuid())
+  url             String
+  clinicId        String?
+  clinic          ClinicProfile? @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  doctorId        String?
+  doctor          DoctorProfile? @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now())
+
+  @@map("gallery_photos")
+}

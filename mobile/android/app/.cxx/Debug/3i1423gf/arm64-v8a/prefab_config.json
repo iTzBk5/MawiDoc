@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "prefabPath": "C:\\Users\\yassi\\.gradle\\caches\\modules-2\\files-2.1\\com.google.prefab\\cli\\2.1.0\\aa32fec809c44fa531f01dcfb739b5b3304d3050\\cli-2.1.0-all.jar",
+  "packages": [
+    "C:\\Users\\yassi\\Documents\\mawidoc\\mobile\\node_modules\\react-native-reanimated\\android\\build\\intermediates\\prefab_package\\debug\\prefab",
+    "C:\\Users\\yassi\\Documents\\mawidoc\\mobile\\node_modules\\react-native-worklets\\android\\build\\intermediates\\prefab_package\\debug\\prefab",
+    "C:\\Users\\yassi\\.gradle\\caches\\9.3.1\\transforms\\cbca72d4ecfc601a7543d95dd4b49c34\\workspace\\transformed\\react-android-0.86.0-debug\\prefab",
+    "C:\\Users\\yassi\\Documents\\mawidoc\\mobile\\node_modules\\react-native-worklets-core\\android\\build\\intermediates\\prefab_package\\debug\\prefab",
+    "C:\\Users\\yassi\\.gradle\\caches\\9.3.1\\transforms\\7763c8847d8875851fe9222bba576d39\\workspace\\transformed\\hermes-android-250829098.0.14-debug\\prefab",
+    "C:\\Users\\yassi\\.gradle\\caches\\9.3.1\\transforms\\91f3fc34a4d52f5c27e8357687ecd9b7\\workspace\\transformed\\fbjni-0.7.0\\prefab"
+  ]
+}
