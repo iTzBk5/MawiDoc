@@ -68,36 +68,39 @@ export class AuthService {
 
     logger.info({ userId: user.id, email: user.email }, 'New patient registered, awaiting verification');
 
-    // Send email using Nodemailer
-    try {
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        connectionTimeout: 5000,
-        auth: {
-          user: process.env.SMTP_USER || 'your-email@gmail.com',
-          pass: process.env.SMTP_PASS || 'your-app-password',
-        },
-      });
-
-      if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-        await transporter.sendMail({
-          from: `"Mawidoc" <${process.env.SMTP_USER}>`,
-          to: user.email,
-          subject: 'Verify your Mawidoc account',
-          text: `Your verification code is: ${verificationCode}`,
-          html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
+    // Send email using Nodemailer asynchronously in the background
+    const sendVerificationEmail = async () => {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          requireTLS: true,
+          auth: {
+            user: process.env.SMTP_USER || 'your-email@gmail.com',
+            pass: process.env.SMTP_PASS || 'your-app-password',
+          },
         });
-        logger.info(`Verification email sent to ${user.email}`);
-      } else {
-        logger.warn(`SMTP credentials missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
+
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+          await transporter.sendMail({
+            from: `"Mawidoc" <${process.env.SMTP_USER}>`,
+            to: user.email,
+            subject: 'Verify your Mawidoc account',
+            text: `Your verification code is: ${verificationCode}`,
+            html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
+          });
+          logger.info(`Verification email sent to ${user.email}`);
+        } else {
+          logger.warn(`SMTP credentials missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
+        }
+      } catch (error) {
+        logger.error({ err: error }, 'Failed to send verification email');
       }
-    } catch (error) {
-      logger.error('Failed to send verification email:', error);
-      // We don't throw here to allow the user to still be created, but in production we might handle this differently.
-    }
+    };
+    
+    // Fire and forget
+    sendVerificationEmail();
 
     return {
       message: 'Registration successful. Please check your email for the verification code.',
@@ -193,34 +196,38 @@ export class AuthService {
       data: { resetPasswordCode: resetCode },
     });
 
-    try {
-      const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        requireTLS: true,
-        connectionTimeout: 5000,
-        auth: {
-          user: process.env.SMTP_USER || 'your-email@gmail.com',
-          pass: process.env.SMTP_PASS || 'your-app-password',
-        },
-      });
-
-      if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-        await transporter.sendMail({
-          from: `"Mawidoc" <${process.env.SMTP_USER}>`,
-          to: user.email,
-          subject: 'Reset your Mawidoc password',
-          text: `Your password reset code is: ${resetCode}`,
-          html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+    const sendResetEmail = async () => {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587,
+          secure: false,
+          requireTLS: true,
+          auth: {
+            user: process.env.SMTP_USER || 'your-email@gmail.com',
+            pass: process.env.SMTP_PASS || 'your-app-password',
+          },
         });
-        logger.info(`Password reset email sent to ${user.email}`);
-      } else {
-        logger.warn(`SMTP credentials missing in .env. Mocking email. Reset OTP for ${user.email} is ${resetCode}`);
+
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+          await transporter.sendMail({
+            from: `"Mawidoc" <${process.env.SMTP_USER}>`,
+            to: user.email,
+            subject: 'Reset your Mawidoc password',
+            text: `Your password reset code is: ${resetCode}`,
+            html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+          });
+          logger.info(`Password reset email sent to ${user.email}`);
+        } else {
+          logger.warn(`SMTP credentials missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
+        }
+      } catch (error) {
+        logger.error({ err: error }, 'Failed to send password reset email');
       }
-    } catch (error) {
-      logger.error('Failed to send password reset email:', error);
-    }
+    };
+    
+    // Fire and forget
+    sendResetEmail();
 
     return { message: 'If an account exists, a verification code has been sent.' };
   }
