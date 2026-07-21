@@ -67,34 +67,32 @@ export class AuthService {
 
     logger.info({ userId: user.id, email: user.email }, 'New patient registered, awaiting verification');
 
-    // Send email using Brevo API asynchronously in the background
+    // Send email using Google Apps Script Webhook asynchronously in the background
     const sendVerificationEmail = async () => {
       try {
-        const brevoApiKey = process.env.BREVO_API_KEY || '';
+        const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
+        if (!googleScriptUrl) {
+          logger.warn(`GOOGLE_SCRIPT_URL missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
+          return;
+        }
         
-        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        const response = await fetch(googleScriptUrl, {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
-            'api-key': brevoApiKey,
-            'content-type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            sender: {
-              name: 'Mawidoc',
-              email: process.env.SMTP_USER || 'bkyassine0105@gmail.com',
-            },
-            to: [{ email: user.email }],
+            to: user.email,
             subject: 'Verify your Mawidoc account',
-            htmlContent: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
+            html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
           }),
         });
 
         if (response.ok) {
-          logger.info(`Verification email sent to ${user.email} via Brevo`);
+          logger.info(`Verification email sent to ${user.email} via Google Apps Script`);
         } else {
           const errorData = await response.text();
-          logger.error({ err: errorData }, `Brevo API Error. For testing, the OTP for ${user.email} is: ${verificationCode}`);
+          logger.error({ err: errorData }, `Google Apps Script Error. For testing, the OTP for ${user.email} is: ${verificationCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send verification email. For testing, the OTP for ${user.email} is: ${verificationCode}`);
@@ -200,31 +198,29 @@ export class AuthService {
 
     const sendResetEmail = async () => {
       try {
-        const brevoApiKey = process.env.BREVO_API_KEY || '';
+        const googleScriptUrl = process.env.GOOGLE_SCRIPT_URL;
+        if (!googleScriptUrl) {
+          logger.warn(`GOOGLE_SCRIPT_URL missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
+          return;
+        }
 
-        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        const response = await fetch(googleScriptUrl, {
           method: 'POST',
           headers: {
-            'accept': 'application/json',
-            'api-key': brevoApiKey,
-            'content-type': 'application/json',
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            sender: {
-              name: 'Mawidoc',
-              email: process.env.SMTP_USER || 'bkyassine0105@gmail.com',
-            },
-            to: [{ email: user.email }],
+            to: user.email,
             subject: 'Reset your Mawidoc password',
-            htmlContent: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+            html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
           }),
         });
 
         if (response.ok) {
-          logger.info(`Password reset email sent to ${user.email} via Brevo`);
+          logger.info(`Password reset email sent to ${user.email} via Google Apps Script`);
         } else {
           const errorData = await response.text();
-          logger.error({ err: errorData }, `Brevo API Error. For testing, the reset code for ${user.email} is: ${resetCode}`);
+          logger.error({ err: errorData }, `Google Apps Script Error. For testing, the reset code for ${user.email} is: ${resetCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send password reset email. For testing, the reset code for ${user.email} is: ${resetCode}`);
