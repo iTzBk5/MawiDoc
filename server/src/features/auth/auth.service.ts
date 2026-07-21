@@ -72,8 +72,10 @@ export class AuthService {
     try {
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        connectionTimeout: 5000,
         auth: {
           user: process.env.SMTP_USER || 'your-email@gmail.com',
           pass: process.env.SMTP_PASS || 'your-app-password',
@@ -194,8 +196,10 @@ export class AuthService {
     try {
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        connectionTimeout: 5000,
         auth: {
           user: process.env.SMTP_USER || 'your-email@gmail.com',
           pass: process.env.SMTP_PASS || 'your-app-password',
