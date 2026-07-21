@@ -98,7 +98,7 @@ export class AuthService {
           logger.warn(`SMTP credentials missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
         }
       } catch (error) {
-        logger.error({ err: error }, 'Failed to send verification email');
+        logger.error({ err: error }, `Failed to send verification email. For testing, the OTP for ${user.email} is: ${verificationCode}`);
       }
     };
     
@@ -226,7 +226,7 @@ export class AuthService {
           logger.warn(`SMTP credentials missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
         }
       } catch (error) {
-        logger.error({ err: error }, 'Failed to send password reset email');
+        logger.error({ err: error }, `Failed to send password reset email. For testing, the reset code for ${user.email} is: ${resetCode}`);
       }
     };
     
