@@ -78,6 +78,7 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
+          // @ts-ignore
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
@@ -206,6 +207,7 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
+          // @ts-ignore
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
