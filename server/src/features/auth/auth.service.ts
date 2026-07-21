@@ -75,9 +75,9 @@ export class AuthService {
       try {
         const transporter = nodemailer.createTransport({
           host: 'smtp.gmail.com',
-          port: 587,
-          secure: false,
-          requireTLS: true,
+          port: 465,
+          secure: true,
+          connectionTimeout: 10000,
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
@@ -203,9 +203,9 @@ export class AuthService {
       try {
         const transporter = nodemailer.createTransport({
           host: 'smtp.gmail.com',
-          port: 587,
-          secure: false,
-          requireTLS: true,
+          port: 465,
+          secure: true,
+          connectionTimeout: 10000,
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
