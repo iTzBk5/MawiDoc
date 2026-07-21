@@ -17,6 +17,7 @@ import notificationRoutes from './features/notification/notification.routes';
 import chatbotRoutes from './features/chatbot/chatbot.routes';
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Security
 app.use(helmet());
