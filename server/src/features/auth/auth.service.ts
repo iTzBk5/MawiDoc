@@ -1,7 +1,4 @@
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
-import dns from 'dns';
-dns.setDefaultResultOrder('ipv4first');
 import { UserRole } from '@prisma/client';
 import { env } from '../../config/env';
 import { hashPassword, comparePassword } from '../../shared/utils/helpers';
@@ -70,32 +67,34 @@ export class AuthService {
 
     logger.info({ userId: user.id, email: user.email }, 'New patient registered, awaiting verification');
 
-    // Send email using Nodemailer asynchronously in the background
+    // Send email using Resend API asynchronously in the background
     const sendVerificationEmail = async () => {
       try {
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          connectionTimeout: 10000,
-          family: 4,
-          auth: {
-            user: process.env.SMTP_USER || 'your-email@gmail.com',
-            pass: process.env.SMTP_PASS || 'your-app-password',
-          },
-        } as any);
+        if (!process.env.RESEND_API_KEY) {
+          logger.warn(`RESEND_API_KEY missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
+          return;
+        }
 
-        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-          await transporter.sendMail({
-            from: `"Mawidoc" <${process.env.SMTP_USER}>`,
-            to: user.email,
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: 'Mawidoc <onboarding@resend.dev>',
+            to: [user.email],
             subject: 'Verify your Mawidoc account',
             text: `Your verification code is: ${verificationCode}`,
             html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
-          });
+          }),
+        });
+
+        if (response.ok) {
           logger.info(`Verification email sent to ${user.email}`);
         } else {
-          logger.warn(`SMTP credentials missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
+          const errorData = await response.text();
+          logger.error({ err: errorData }, `Resend API Error. For testing, the OTP for ${user.email} is: ${verificationCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send verification email. For testing, the OTP for ${user.email} is: ${verificationCode}`);
@@ -201,29 +200,31 @@ export class AuthService {
 
     const sendResetEmail = async () => {
       try {
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          connectionTimeout: 10000,
-          family: 4,
-          auth: {
-            user: process.env.SMTP_USER || 'your-email@gmail.com',
-            pass: process.env.SMTP_PASS || 'your-app-password',
-          },
-        } as any);
+        if (!process.env.RESEND_API_KEY) {
+          logger.warn(`RESEND_API_KEY missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
+          return;
+        }
 
-        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-          await transporter.sendMail({
-            from: `"Mawidoc" <${process.env.SMTP_USER}>`,
-            to: user.email,
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: 'Mawidoc <onboarding@resend.dev>',
+            to: [user.email],
             subject: 'Reset your Mawidoc password',
             text: `Your password reset code is: ${resetCode}`,
             html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
-          });
+          }),
+        });
+
+        if (response.ok) {
           logger.info(`Password reset email sent to ${user.email}`);
         } else {
-          logger.warn(`SMTP credentials missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
+          const errorData = await response.text();
+          logger.error({ err: errorData }, `Resend API Error. For testing, the reset code for ${user.email} is: ${resetCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send password reset email. For testing, the reset code for ${user.email} is: ${resetCode}`);
