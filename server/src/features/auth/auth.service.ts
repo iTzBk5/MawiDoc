@@ -67,34 +67,34 @@ export class AuthService {
 
     logger.info({ userId: user.id, email: user.email }, 'New patient registered, awaiting verification');
 
-    // Send email using Resend API asynchronously in the background
+    // Send email using Brevo API asynchronously in the background
     const sendVerificationEmail = async () => {
       try {
-        if (!process.env.RESEND_API_KEY) {
-          logger.warn(`RESEND_API_KEY missing in .env. Mocking email. OTP for ${user.email} is ${verificationCode}`);
-          return;
-        }
-
-        const response = await fetch('https://api.resend.com/emails', {
+        const brevoApiKey = process.env.BREVO_API_KEY;
+        
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            'accept': 'application/json',
+            'api-key': brevoApiKey,
+            'content-type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Mawidoc <onboarding@resend.dev>',
-            to: [user.email],
+            sender: {
+              name: 'Mawidoc',
+              email: process.env.SMTP_USER || 'bkyassine0105@gmail.com',
+            },
+            to: [{ email: user.email }],
             subject: 'Verify your Mawidoc account',
-            text: `Your verification code is: ${verificationCode}`,
-            html: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
+            htmlContent: `<p>Your verification code is: <strong>${verificationCode}</strong></p>`,
           }),
         });
 
         if (response.ok) {
-          logger.info(`Verification email sent to ${user.email}`);
+          logger.info(`Verification email sent to ${user.email} via Brevo`);
         } else {
           const errorData = await response.text();
-          logger.error({ err: errorData }, `Resend API Error. For testing, the OTP for ${user.email} is: ${verificationCode}`);
+          logger.error({ err: errorData }, `Brevo API Error. For testing, the OTP for ${user.email} is: ${verificationCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send verification email. For testing, the OTP for ${user.email} is: ${verificationCode}`);
@@ -200,31 +200,31 @@ export class AuthService {
 
     const sendResetEmail = async () => {
       try {
-        if (!process.env.RESEND_API_KEY) {
-          logger.warn(`RESEND_API_KEY missing in .env. Mocking email. Reset code for ${user.email} is ${resetCode}`);
-          return;
-        }
+        const brevoApiKey = process.env.BREVO_API_KEY;
 
-        const response = await fetch('https://api.resend.com/emails', {
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            'accept': 'application/json',
+            'api-key': brevoApiKey,
+            'content-type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Mawidoc <onboarding@resend.dev>',
-            to: [user.email],
+            sender: {
+              name: 'Mawidoc',
+              email: process.env.SMTP_USER || 'bkyassine0105@gmail.com',
+            },
+            to: [{ email: user.email }],
             subject: 'Reset your Mawidoc password',
-            text: `Your password reset code is: ${resetCode}`,
-            html: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
+            htmlContent: `<p>Your password reset code is: <strong>${resetCode}</strong></p>`,
           }),
         });
 
         if (response.ok) {
-          logger.info(`Password reset email sent to ${user.email}`);
+          logger.info(`Password reset email sent to ${user.email} via Brevo`);
         } else {
           const errorData = await response.text();
-          logger.error({ err: errorData }, `Resend API Error. For testing, the reset code for ${user.email} is: ${resetCode}`);
+          logger.error({ err: errorData }, `Brevo API Error. For testing, the reset code for ${user.email} is: ${resetCode}`);
         }
       } catch (error) {
         logger.error({ err: error }, `Failed to send password reset email. For testing, the reset code for ${user.email} is: ${resetCode}`);
