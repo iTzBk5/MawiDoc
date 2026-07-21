@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import dns from 'dns';
+dns.setDefaultResultOrder('ipv4first');
 import { UserRole } from '@prisma/client';
 import { env } from '../../config/env';
 import { hashPassword, comparePassword } from '../../shared/utils/helpers';
