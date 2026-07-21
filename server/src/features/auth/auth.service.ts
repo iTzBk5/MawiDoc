@@ -78,6 +78,7 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
+          family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
             pass: process.env.SMTP_PASS || 'your-app-password',
@@ -205,6 +206,7 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
+          family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
             pass: process.env.SMTP_PASS || 'your-app-password',
