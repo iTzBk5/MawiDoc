@@ -78,13 +78,12 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
-          // @ts-ignore
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
             pass: process.env.SMTP_PASS || 'your-app-password',
           },
-        });
+        } as any);
 
         if (process.env.SMTP_USER && process.env.SMTP_PASS) {
           await transporter.sendMail({
@@ -207,13 +206,12 @@ export class AuthService {
           port: 587,
           secure: false,
           requireTLS: true,
-          // @ts-ignore
           family: 4,
           auth: {
             user: process.env.SMTP_USER || 'your-email@gmail.com',
             pass: process.env.SMTP_PASS || 'your-app-password',
           },
-        });
+        } as any);
 
         if (process.env.SMTP_USER && process.env.SMTP_PASS) {
           await transporter.sendMail({
