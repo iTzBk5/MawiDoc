@@ -90,7 +90,7 @@ When recommending doctors, format them clearly with their name, specialty, and c
             throw new Error(`Groq API Error: ${response.status} ${errorText}`);
           }
 
-          const data = await response.json();
+          const data = (await response.json()) as any;
           responseText = data.choices[0].message.content;
           break; // Success
         } catch (error: any) {
