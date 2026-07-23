@@ -1,18 +1,19 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import prisma from '../../shared/database';
 import logger from '../../shared/utils/logger';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+const GROQ_API_KEY = process.env.GROQ_API_KEY || '';
 
 export class ChatbotService {
-  private genAI: GoogleGenerativeAI;
-
-  constructor() {
-    this.genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-  }
-
   async askQuestion(message: string, conversationHistory: { role: string; content: string }[] = []) {
     try {
+      if (!GROQ_API_KEY) {
+        logger.warn('GROQ_API_KEY is missing');
+        return {
+          message: "Sorry, the AI chatbot is currently offline because the GROQ_API_KEY is missing.",
+          specialties: [],
+        };
+      }
+
       // Fetch all specialties and doctors from the database
       const [specialties, doctors] = await Promise.all([
         prisma.specialty.findMany(),
@@ -55,32 +56,46 @@ ${doctorList}
 When recommending doctors, format them clearly with their name, specialty, and city.`;
 
       const history = conversationHistory.map((msg) => ({
-        role: msg.role === 'user' ? 'user' as const : 'model' as const,
-        parts: [{ text: msg.content }],
+        role: msg.role === 'user' ? 'user' : 'assistant',
+        content: msg.content,
       }));
+
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...history,
+        { role: 'user', content: message }
+      ];
 
       let responseText = '';
       let attempts = 0;
       const maxAttempts = 3;
-      const modelsToTry = ['gemini-flash-lite-latest', 'gemini-3.1-flash-lite', 'gemini-2.5-flash-lite'];
 
       while (attempts < maxAttempts) {
         try {
-          const modelName = modelsToTry[attempts % modelsToTry.length];
-          const model = this.genAI.getGenerativeModel({ model: modelName });
-          const chat = model.startChat({
-            history,
-            systemInstruction: {
-              role: 'system',
-              parts: [{ text: systemPrompt }],
+          const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${GROQ_API_KEY}`,
+              'Content-Type': 'application/json'
             },
+            body: JSON.stringify({
+              model: 'llama-3.3-70b-versatile',
+              messages: messages,
+              temperature: 0.7,
+            })
           });
-          const result = await chat.sendMessage(message);
-          responseText = result.response.text();
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Groq API Error: ${response.status} ${errorText}`);
+          }
+
+          const data = await response.json();
+          responseText = data.choices[0].message.content;
           break; // Success
         } catch (error: any) {
           attempts++;
-          logger.warn({ err: error.message, attempt: attempts }, 'Gemini API attempt failed');
+          logger.warn({ err: error.message, attempt: attempts }, 'Groq API attempt failed');
           if (attempts >= maxAttempts) {
             logger.error({ err: error.message }, 'Chatbot error after all retries');
             responseText = "Sorry, I couldn't process your request right now due to high demand. Please try again in a moment.";
